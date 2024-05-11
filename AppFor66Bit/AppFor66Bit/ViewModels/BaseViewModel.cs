@@ -10,7 +10,7 @@ namespace AppFor66Bit.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public IDataStore<News> DataStore => DependencyService.Get<IDataStore<News>>();
 
         bool isBusy = false;
         public bool IsBusy

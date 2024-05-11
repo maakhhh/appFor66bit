@@ -6,55 +6,39 @@ using System.Threading.Tasks;
 
 namespace AppFor66Bit.Services
 {
-    public class MockDataStore : IDataStore<Item>
+    public class MockDataStore : IDataStore<News>
     {
-        readonly List<Item> items;
+        readonly List<News> news;
 
         public MockDataStore()
         {
-            items = new List<Item>()
+            news = new List<News>()
             {
-                new Item { Id = Guid.NewGuid().ToString(), Text = "First item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Second item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Third item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Fourth item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Fifth item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Sixth item", Description="This is an item description." }
+                new News { Id=0, Title="Новость номер 1", Content="Описание первой новости большое" },
+                new News { Id=1, Title="Новость номер 1", Content="Описание первой новости большое" },
+                new News { Id=2, Title="Новость номер 1", Content="Описание первой новости большое" },
+                new News { Id=3, Title="Новость номер 1", Content="Описание первой новости большое" },
+                new News { Id=4, Title="Новость номер 1", Content="Описание первой новости большое" },
             };
         }
 
-        public async Task<bool> AddItemAsync(Item item)
+        public async Task<bool> UpdateItemAsync(News newToUpdate)
         {
-            items.Add(item);
+            var oldNew = news.Where((News arg) => arg.Id == newToUpdate.Id).FirstOrDefault();
+            news.Remove(oldNew);
+            news.Add(newToUpdate);
 
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateItemAsync(Item item)
+        public async Task<News> GetItemAsync(int id)
         {
-            var oldItem = items.Where((Item arg) => arg.Id == item.Id).FirstOrDefault();
-            items.Remove(oldItem);
-            items.Add(item);
-
-            return await Task.FromResult(true);
+            return await Task.FromResult(news.FirstOrDefault(s => s.Id == id));
         }
 
-        public async Task<bool> DeleteItemAsync(string id)
+        public async Task<IEnumerable<News>> GetItemsAsync(bool forceRefresh = false)
         {
-            var oldItem = items.Where((Item arg) => arg.Id == id).FirstOrDefault();
-            items.Remove(oldItem);
-
-            return await Task.FromResult(true);
-        }
-
-        public async Task<Item> GetItemAsync(string id)
-        {
-            return await Task.FromResult(items.FirstOrDefault(s => s.Id == id));
-        }
-
-        public async Task<IEnumerable<Item>> GetItemsAsync(bool forceRefresh = false)
-        {
-            return await Task.FromResult(items);
+            return await Task.FromResult(news);
         }
     }
 }

@@ -11,13 +11,13 @@ namespace AppFor66Bit.ViewModels
     public class ItemsViewModel : BaseViewModel
     {
 
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<News> News { get; }
         public Command LoadItemsCommand { get; }
 
         public ItemsViewModel()
         {
             Title = "Избранное";
-            Items = new ObservableCollection<Item>();
+            News = new ObservableCollection<News>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
         }
 
@@ -27,11 +27,12 @@ namespace AppFor66Bit.ViewModels
 
             try
             {
-                Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
+                News.Clear();
+                var news = await DataStore.GetItemsAsync(true);
+                foreach (var currentNew in news)
                 {
-                    Items.Add(item);
+                    if (currentNew.IsFeatured && !currentNew.IsHidden)
+                        News.Add(currentNew);
                 }
             }
             catch (Exception ex)

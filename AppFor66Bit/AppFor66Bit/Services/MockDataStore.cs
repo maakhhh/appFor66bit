@@ -2,25 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AppFor66Bit.Services
 {
     public class MockDataStore : IDataStore<News>
     {
-        readonly List<News> news;
-
-        public MockDataStore()
-        {
-            news = new List<News>()
-            {
-                new News { Id=0, Title="Новость номер 1", Content="Описание первой новости большое" },
-                new News { Id=1, Title="Новость номер 1", Content="Описание первой новости большое" },
-                new News { Id=2, Title="Новость номер 1", Content="Описание первой новости большое" },
-                new News { Id=3, Title="Новость номер 1", Content="Описание первой новости большое" },
-                new News { Id=4, Title="Новость номер 1", Content="Описание первой новости большое" },
-            };
-        }
+        private List<News> news;
 
         public async Task<bool> UpdateItemAsync(News newToUpdate)
         {
@@ -36,8 +26,23 @@ namespace AppFor66Bit.Services
             return await Task.FromResult(news.FirstOrDefault(s => s.Id == id));
         }
 
-        public async Task<IEnumerable<News>> GetItemsAsync(bool forceRefresh = false)
+        public IEnumerable<News> GetItems() => news;
+
+        public async Task<IEnumerable<News>> GetItemsFromDatabaseAsync(bool forceRefresh = false)
         {
+            var client = new HttpClient();
+            var response = await client.GetAsync("https://frontappapi.dock7.66bit.ru/api/news/get?count=20&page=1");
+
+            if (true)
+            {
+                var responseContent = response.Content;
+                var json = await responseContent.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                news = JsonSerializer.Deserialize<List<News>>(json, options);
+            }    
             return await Task.FromResult(news);
         }
     }

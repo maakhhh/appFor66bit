@@ -23,7 +23,7 @@
     </Shell.Resources>
 
     <TabBar>
-        <ShellContent Title="Новости" Icon="icon_about.png" Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-        <ShellContent Title="Избранное" Icon="icon_feed.png" ContentTemplate="{DataTemplate local:ItemsPage}" />
+        <ShellContent Title="Новости" Icon="icon_news.png" Route="NewsPage" ContentTemplate="{DataTemplate local:NewsPage}" />
+        <ShellContent Title="Избранное" Icon="icon_selected.png" ContentTemplate="{DataTemplate local:SelectedNewsPage}" />
     </TabBar>
 </Shell>

@@ -8,17 +8,30 @@ using Xamarin.Forms;
 
 namespace AppFor66Bit.ViewModels
 {
-    public class ItemsViewModel : BaseViewModel
+    public class SelectedNewsViewModel : BaseViewModel
     {
 
         public ObservableCollection<News> News { get; }
         public Command LoadItemsCommand { get; }
 
-        public ItemsViewModel()
+
+        public SelectedNewsViewModel()
         {
             Title = "Избранное";
             News = new ObservableCollection<News>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
+        }
+
+        public void RemoveItemFromSelectedNews(News item)
+        {
+            item.IsFeatured = false;
+            DataStore.UpdateItemAsync(item);
+        }
+
+        public void AddItemToHiddenNews(News item)
+        {
+            item.IsHidden = true;
+            DataStore.UpdateItemAsync(item);
         }
 
         async Task ExecuteLoadItemsCommand()
@@ -28,7 +41,7 @@ namespace AppFor66Bit.ViewModels
             try
             {
                 News.Clear();
-                var news = await DataStore.GetItemsAsync(true);
+                var news = await DataStore.GetItemsFromDatabaseAsync(true);
                 foreach (var currentNew in news)
                 {
                     if (currentNew.IsFeatured && !currentNew.IsHidden)
@@ -45,9 +58,27 @@ namespace AppFor66Bit.ViewModels
             }
         }
 
+        public async void UpdateNews()
+        {
+            var news = DataStore.GetItems();
+
+            if (news == null)
+            {
+                await ExecuteLoadItemsCommand();
+                return;
+            }
+
+            News.Clear();
+            foreach (var item in news)
+            {
+                if (!item.IsHidden && item.IsFeatured)
+                    News.Add(item);
+            }
+        }
+
         public void OnAppearing()
         {
-            IsBusy = true;
+            UpdateNews();
         }
 
     }
